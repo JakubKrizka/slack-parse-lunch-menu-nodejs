@@ -1,0 +1,18 @@
+{
+  "name": "nodejs-slack-obed-CZ",
+  "version": "1.0.0",
+  "description": "Informace o denním menu přímo v aplikaci Slack. Jedná se o jednoduché parsování stránky, následná malá úprava a šup s tím do Slacku",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jakub Křižka",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser" : "latest",
+    "request"     : "latest",
+    "cheerio"     : "latest",
+    "express"     : "latest",
+    "moment"      : "latest"
+  }
+}
