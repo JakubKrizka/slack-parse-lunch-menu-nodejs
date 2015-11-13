@@ -65,8 +65,12 @@ switch (ops.restaurant) {
     case 'ocean':
         url = 'http://www.ocean48.cz/bistro/nabidka';
         parse = function ($) {
+            var leftHalfCol = $('.content .left-half.col');
+            if (leftHalfCol.find('p').length) {
+                return url;
+            }
             var text = null;
-            $('.content .left-half.col').each(function () {
+            leftHalfCol.each(function () {
                 var $this = $(this);
                 $this.html($this.html().replace(/\r\n|\t|\n|[ ]{2}/g, ''));
 
