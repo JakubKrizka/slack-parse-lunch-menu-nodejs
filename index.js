@@ -45,7 +45,7 @@ switch (ops.restaurant) {
         parse = function ($) {
             var date = moment().day();
             var text = null;
-            $('.article-content p:nth-child(' + (2 + date) + ')').each(function () {
+            $('.article-content p:nth-child(' + (3 + date) + ')').each(function () {
                 var $this = $(this);
                 $this.html($this.html().replace(/\t|\n|[ ]{2}/g, ''));
                 $this.find('strong').each(function () {
