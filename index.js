@@ -25,6 +25,7 @@ app.use(function (err, req, res, next) {
     res.status(400).send(err.message);
 });
 
+
 // console notice
 app.listen(port, function () {
     console.log('nodejs-slack-lunch listening on port ' + port);
