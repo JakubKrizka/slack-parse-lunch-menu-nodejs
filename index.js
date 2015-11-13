@@ -56,10 +56,6 @@ switch (ops.restaurant) {
                 html = html.replace(/<br>/g, '\n');
 
                 text = $(html).text().trim();
-
-                if (!text) {
-                    text = 'nic';
-                }
             });
 
             return text;
