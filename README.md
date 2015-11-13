@@ -3,6 +3,11 @@
 Simple parse website of restaurant and push menu of lunch to the Slack.
 
 ----
+# DEMO
+
+![snimek obrazovky 2015-11-13 v 16 14 35](https://cloud.githubusercontent.com/assets/10690361/11149340/45bd920e-8a22-11e5-8970-083859724a7a.png)
+
+----
 
 # Installation
 
