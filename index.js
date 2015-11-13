@@ -136,9 +136,10 @@ request(url, function (error, response, html) {
     if (!error) {
         request.post({
             uri: ops.url,
-            form: JSON.stringify({
+            json: true,
+            body: {
                 text: parse(cheerio.load(html))
-            })
+            }
         }, function (error, response) {
             console.log(error ? error : response.body);
         });
