@@ -104,7 +104,7 @@ switch (ops.restaurant) {
         url = 'https://www.zomato.com/cs/brno/pad-thai-kr%C3%A1lovo-pole-brno-sever/';
         parse = function ($) {
             var text = null;
-            $('#tabtop .menu-preview.bb5').filter(function () {
+            $('#tabtop .menu-preview.bb5').each(function () {
                 var $this = $(this);
                 $this.html($this.html().replace(/\t|\n|[ ]{2}/g, ''));
 
@@ -119,7 +119,6 @@ switch (ops.restaurant) {
                 });
 
                 text = $this.text();
-
             });
 
             return text;
@@ -140,6 +139,10 @@ request(url, function (error, response, html) {
             form: JSON.stringify({
                 text: parse(cheerio.load(html))
             })
+        }, function (error, response) {
+            console.log(error ? error : response.body);
         });
+    } else {
+        console.log(error);
     }
 });
