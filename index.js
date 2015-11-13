@@ -142,3 +142,32 @@ app.post('/cestaci', function(req, res){
 		}
 	})
 })
+
+app.post('/vietmac', function(req, res){
+	url = 'https://www.zomato.com/cs/brno/pad-thai-kr%C3%A1lovo-pole-brno-sever/';
+	request(url, function(error, response, html){
+		if(!error){
+			var $ = cheerio.load(html);
+			$('body').filter(function(){
+				var data = $(this);
+				test_str = data.text();
+				var date = moment().day();
+				
+					test_str = test_str.replace(/  /g, '');
+					test_str = test_str.replace(/\n\n\n\n\n\n\n\n\n/g, '\n');
+					test_str = test_str.replace(/\n\n\n\n/g, ' ');
+				
+						var start_pos = test_str.indexOf('(Dnes)');
+						var end_pos = test_str.indexOf('Menu',start_pos);
+						
+				
+					var text_to_get = test_str.substring(start_pos,end_pos)
+				
+				var botPayload = {
+					text : text_to_get
+				};
+				return res.status(200).json(botPayload);
+			})
+		}
+	})
+})
