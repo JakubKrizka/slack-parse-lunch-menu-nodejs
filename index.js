@@ -31,61 +31,34 @@ app.listen(port, function () {
 // define first restaurant 
 app.post('/racek', function(req, res){
 	// parse this website
-	url = 'http://www.restaurace-racek.cz/sluzby/denni-menu/';
+	url = 'http://www.restaurace-racek.cz/sluzby/';
 	// send request
 	request(url, function(error, response, html){
 		if(!error){
-			// load HTML
 			var $ = cheerio.load(html);
-			// define <body> or .class od #id what we need parse
-			$('body').filter(function(){
-				// get data
-				var data = $(this);
-				test_str = data.text();
-				// get today number, Mon = 1 ... Wed = 3 ... Fri = 5 ...
-				var date = moment().day();
-				// we don't need weekends
-				var match = true;
-				// parse \t
-				test_str = test_str.replace(/\t/g, '');
-				// and parse more then one \n to one \n
-				test_str = test_str.replace(/^\s*\n/gm, '\n');
-				// switch date to parse only that day ;) Mon - Fri else match = false
-				switch (date) {
-					case 1:
-						var start_pos = test_str.indexOf('PONDĚLÍ');
-						var end_pos = test_str.indexOf('ÚTERÝ',start_pos);
-						break;
-					case 2:
-						var start_pos = test_str.indexOf('ÚTERÝ');
-						var end_pos = test_str.indexOf('STŘEDA',start_pos);
-						break;
-					case 3:
-						var start_pos = test_str.indexOf('STŘEDA');
-						var end_pos = test_str.indexOf('ČTVRTEK',start_pos);
-						break;
-					case 4:
-						var start_pos = test_str.indexOf('ČTVRTEK');
-						var end_pos = test_str.indexOf('PÁTEK',start_pos);
-						break;
-					case 5:
-						var start_pos = test_str.indexOf('PÁTEK');
-						var end_pos = test_str.indexOf('window.google_analytics_uacct',start_pos);
-						break;
-					default:
-						match = false;
-				}
-				// if is not weekends
-				if (match) {
-					var text_to_get = test_str.substring(start_pos,end_pos)
-				} else {
-					text_to_get = "Dneska se nevaří... objednej #damejidlo nebo #pizza";
-				}
-				// create JSON to slackbot
-				var botPayload = {
-					text : text_to_get
-				};
-				return res.status(200).json(botPayload);
+			
+			$('.wsw table tbody').filter(function(){
+				var $this = $(this);
+				$this.html($this.html().replace(/\t|\n/g, ''));
+				$this.find("tr").each(function(){
+					var $this = $(this);
+					var secondColumn = $this.find('td:nth-child(2)');
+					if (!secondColumn.text().trim()) {
+						$this.remove();
+					} else {
+						var thirdColumn = $this.find('td:nth-child(3)');
+						if (thirdColumn.text().trim()) {
+							thirdColumn.text('\t' + thirdColumn.text());
+						}
+						secondColumn.text('\t' + secondColumn.text());
+						$this.replaceWith('\n' + $this.text());
+					}
+				})
+				
+				return res.status(200).json({
+					text : $this.text()
+				});
+
 			})
 		}
 	})
@@ -96,55 +69,29 @@ app.post('/cestaci', function(req, res){
 	url = 'http://www.hedvabnastezka.cz/klub-cestovatelu-brno/poledni-menu-2/';
 	request(url, function(error, response, html){
 		if(!error){
-			var $ = cheerio.load(html, {
-			    decodeEntities: true
-			});
+			var $ = cheerio.load(html);
 
 			var date = moment().day();
 
 			$('.article-content p:nth-child('+ (3+date) +')').filter(function(){
-				var data = $(this);
-				test_str = data.html();
+				var $this = $(this);
+				$this.find('strong').each(function(){
+					var $this = $(this);
+					$this.replaceWith('\t' + $this.text());
+				});
+				html = $this.html();
+				html = html.replace(/<br>/g, '\n');
 				
-				var match = true;
-				
-				
-				//test_str = test_str.replace(/<br>/g, '\n1.');
-					//test_str = test_str.replace(/2./g, '\n\n2.');
-					//test_str = test_str.replace(/3./g, '\n\n3.');
-				switch (date) {
-					case 1:
-						var start_pos = test_str.indexOf('Pondělí');
-						var end_pos = test_str.indexOf('Úterý',start_pos);
-						break;
-					case 2:
-						var start_pos = test_str.indexOf('Úterý');
-						var end_pos = test_str.indexOf('Středa',start_pos);
-						break;
-					case 3:
-						var start_pos = test_str.indexOf('Středa');
-						var end_pos = test_str.indexOf('Čtvrtek',start_pos);
-						break;
-					case 4:
-						var start_pos = test_str.indexOf('Čtvrtek');
-						var end_pos = test_str.indexOf('Pátek',start_pos);
-						break;
-					case 5:
-						var start_pos = test_str.indexOf('Pátek');
-						var end_pos = test_str.indexOf('Restaurace',start_pos);
-						break;
-					default:
-						match = false;
+				var text = $(html).text().trim();
+
+				if (!text) {
+					text = 'nic';
 				}
-				if (match) {
-					var text_to_get = test_str.substring(start_pos,end_pos)
-				} else {
-					text_to_get = "Dneska se nevaří... objednej #damejidlo nebo #pizza";
-				}
-				var botPayload = {
-					text : test_str
-				};
-				return res.status(200).json(botPayload);
+
+				return res.status(200).json({
+					text : text
+				});
+				
 			})
 		}
 	})
