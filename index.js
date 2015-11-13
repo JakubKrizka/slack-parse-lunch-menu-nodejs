@@ -96,13 +96,20 @@ app.post('/cestaci', function(req, res){
 	url = 'http://www.hedvabnastezka.cz/klub-cestovatelu-brno/poledni-menu-2/';
 	request(url, function(error, response, html){
 		if(!error){
-			var $ = cheerio.load(html);
-			$('#article').filter(function(){
+			var $ = cheerio.load(html, {
+			    decodeEntities: true
+			});
+
+			var date = moment().day();
+
+			$('.article-content p:nth-child('+ (3+date) +')').filter(function(){
 				var data = $(this);
-				test_str = data.text();
-				var date = moment().day();
+				test_str = data.html();
+				
 				var match = true;
-					//test_str = test_str.replace(/1./g, '\n\n1.');
+				
+				
+				//test_str = test_str.replace(/<br>/g, '\n1.');
 					//test_str = test_str.replace(/2./g, '\n\n2.');
 					//test_str = test_str.replace(/3./g, '\n\n3.');
 				switch (date) {
@@ -135,7 +142,7 @@ app.post('/cestaci', function(req, res){
 					text_to_get = "Dneska se nevaří... objednej #damejidlo nebo #pizza";
 				}
 				var botPayload = {
-					text : text_to_get
+					text : test_str
 				};
 				return res.status(200).json(botPayload);
 			})
