@@ -25,7 +25,7 @@ app.use(function (err, req, res, next) {
 
 // console notice
 app.listen(port, function () {
-  console.log('nodejs-slack-lunch listening on port ' + port);
+	console.log('nodejs-slack-lunch listening on port ' + port);
 });
 
 // define first restaurant 
@@ -36,7 +36,7 @@ app.post('/racek', function(req, res){
 	request(url, function(error, response, html){
 		if(!error){
 			var $ = cheerio.load(html);
-			
+
 			$('.wsw table tbody').filter(function(){
 				var $this = $(this);
 				$this.html($this.html().replace(/\t|\n/g, ''));
@@ -46,15 +46,16 @@ app.post('/racek', function(req, res){
 					if (!secondColumn.text().trim()) {
 						$this.remove();
 					} else {
-						var thirdColumn = $this.find('td:nth-child(3)');
-						if (thirdColumn.text().trim()) {
-							thirdColumn.text('\t' + thirdColumn.text());
+						var firstColumn = $this.find('td:nth-child(1)');
+
+						if (firstColumn.text().trim()) {
+							firstColumn.text('\t' + firstColumn.text() + '\t');
 						}
-						secondColumn.text('\t' + secondColumn.text());
+						secondColumn.text(secondColumn.text() + '\t');
 						$this.replaceWith('\n' + $this.text());
 					}
 				})
-				
+
 				return res.status(200).json({
 					text : $this.text()
 				});
@@ -73,7 +74,7 @@ app.post('/cestaci', function(req, res){
 
 			var date = moment().day();
 
-			$('.article-content p:nth-child('+ (3+date) +')').filter(function(){
+			$('.article-content p:nth-child('+ (2+date) +')').filter(function(){
 				var $this = $(this);
 				$this.find('strong').each(function(){
 					var $this = $(this);
@@ -81,7 +82,7 @@ app.post('/cestaci', function(req, res){
 				});
 				html = $this.html();
 				html = html.replace(/<br>/g, '\n');
-				
+
 				var text = $(html).text().trim();
 
 				if (!text) {
@@ -91,7 +92,7 @@ app.post('/cestaci', function(req, res){
 				return res.status(200).json({
 					text : text
 				});
-				
+
 			})
 		}
 	})
@@ -106,17 +107,17 @@ app.post('/vietmac', function(req, res){
 				var data = $(this);
 				test_str = data.text();
 				var date = moment().day();
-				
-					test_str = test_str.replace(/  /g, '');
-					test_str = test_str.replace(/\n\n\n\n\n\n\n\n\n/g, '\n');
-					test_str = test_str.replace(/\n\n\n\n/g, ' ');
-				
-						var start_pos = test_str.indexOf('(Dnes)');
-						var end_pos = test_str.indexOf('Menu',start_pos);
-						
-				
-					var text_to_get = test_str.substring(start_pos,end_pos)
-				
+
+				test_str = test_str.replace(/  /g, '');
+				test_str = test_str.replace(/\n\n\n\n\n\n\n\n\n/g, '\n');
+				test_str = test_str.replace(/\n\n\n\n/g, ' ');
+
+				var start_pos = test_str.indexOf('(Dnes)');
+				var end_pos = test_str.indexOf('Menu',start_pos);
+
+
+				var text_to_get = test_str.substring(start_pos,end_pos)
+
 				var botPayload = {
 					text : text_to_get
 				};
