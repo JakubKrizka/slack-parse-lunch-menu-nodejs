@@ -34,7 +34,7 @@ switch (ops.restaurant) {
                 });
 
                 text = $this.text();
-            })
+            });
 
             return text;
         };
@@ -44,21 +44,23 @@ switch (ops.restaurant) {
         url = 'http://www.hedvabnastezka.cz/klub-cestovatelu-brno/poledni-menu-2/';
         parse = function ($) {
             var date = moment().day();
-            var text = null;
-            $('.article-content p:nth-child(' + (3 + date) + ')').each(function () {
-                var $this = $(this);
-                $this.html($this.html().replace(/\t|\n|[ ]{2}/g, ''));
-                $this.find('strong').each(function () {
-                    var $this = $(this);
-                    $this.replaceWith('\t' + $this.text());
-                });
-                html = $this.html();
-                html = html.replace(/<br>/g, '\n');
+            var text = $('.article-content').text();
+            var from = null;
 
-                text = $(html).text().trim();
-            });
-
-            return text;
+            switch (date) {
+                case 1:
+                    return text.substring(from = text.indexOf('Pondělí'), text.indexOf('Úterý',from));
+                case 2:
+                    return text.substring(from = text.indexOf('Úterý'), text.indexOf('Středa',from));
+                case 3:
+                    return text.substring(from = text.indexOf('Středa'), text.indexOf('Čtvrtek',from));
+                case 4:
+                    return text.substring(from = text.indexOf('Čtvrtek'), text.indexOf('Pátek',from));
+                case 5:
+                    return text.substring(text.indexOf('Pátek'));
+                default:
+                    return "Dneska se nevaří... objednej #damejidlo nebo #pizza";
+            }
         };
         break;
 
