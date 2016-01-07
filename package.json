@@ -16,6 +16,6 @@
     "request": "latest",
     "cheerio": "latest",
     "moment": "latest",
-    "stdio": "stdio"
+    "stdio": "latest"
   }
 }
